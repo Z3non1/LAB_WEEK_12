@@ -1,46 +1,26 @@
 package com.example.test_lab_week_12
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.example.test_lab_week_12.api.MovieService
-import com.example.test_lab_week_12.model.Movie // <--- TAMBAHKAN IMPORT INI
+import com.example.test_lab_week_12.model.Movie
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow    // Import Wajib
+import kotlinx.coroutines.flow.flow    // Import Wajib
+import kotlinx.coroutines.flow.flowOn  // Import Wajib
 
 class MovieRepository(private val movieService: MovieService) {
 
     private val apiKey = "7083020efe09f3ec46b7dc608d4fe2bf"
 
-    // Menggunakan tipe data List<Movie>
-    private val movieLiveData = MutableLiveData<List<Movie>>()
-    val movies: LiveData<List<Movie>>
-        get() = movieLiveData
+    fun fetchMovies(): Flow<List<Movie>> {
+        return flow {
+            // Mengambil data dari API
+            val response = movieService.getPopularMovies(apiKey)
 
-    private val errorLiveData = MutableLiveData<String>()
-    val error: LiveData<String>
-        get() = errorLiveData
+            // Mengecek apakah response body (hasilnya) ada atau tidak
+            // response.results mungkin null jika API gagal, jadi kita handle dengan aman
+            val movies = response.body()?.results ?: emptyList()
 
-    suspend fun fetchMovies() {
-        try {
-            // Panggil API di thread IO
-            val response = withContext(Dispatchers.IO) {
-                movieService.getPopularMovies(apiKey)
-            }
-
-            if (response.isSuccessful) {
-                val body = response.body() // Ini tipe datanya PopularMoviesResponse?
-                if (body != null) {
-                    // Pastikan 'results' ada di dalam PopularMoviesResponse dan bertipe List<Movie>
-                    movieLiveData.postValue(body.results)
-                } else {
-                    errorLiveData.postValue("No data received from server")
-                }
-            } else {
-                errorLiveData.postValue("API error: ${response.code()} - ${response.message()}")
-            }
-
-        } catch (exception: Exception) {
-            errorLiveData.postValue("An error occurred: ${exception.message}")
-        }
+            emit(movies)
+        }.flowOn(Dispatchers.IO)
     }
 }
