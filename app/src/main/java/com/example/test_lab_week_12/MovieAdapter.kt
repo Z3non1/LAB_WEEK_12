@@ -1,4 +1,4 @@
-package com.example.test_lab_week_12
+package com.example.test_lab_week_12.model
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,53 +7,54 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.test_lab_week_12.model.Movie
+import com.example.test_lab_week_12.R // Pastikan ini tidak merah
 
-class MovieAdapter(private val clickListener: MovieClickListener) :
-    RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+class MovieAdapter(
+    private val listener: MovieClickListener
+) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
     private val movies = mutableListOf<Movie>()
 
+    interface MovieClickListener {
+        fun onMovieClick(movie: Movie)
+    }
+
+    fun addMovies(newMovies: List<Movie>) {
+        movies.clear()
+        movies.addAll(newMovies)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.view_movie_item, parent, false)
+        // Pastikan file 'res/layout/item_movie.xml' sudah dibuat
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_movie, parent, false)
         return MovieViewHolder(view)
     }
 
-    override fun getItemCount() = movies.size
-
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = movies[position]
-        holder.bind(movie)
-        holder.itemView.setOnClickListener { clickListener.onMovieClick(movie) }
+        holder.bind(movies[position])
     }
 
-    fun addMovies(movieList: List<Movie>) {
-        movies.addAll(movieList)
-        notifyItemRangeInserted(0, movieList.size)
-    }
+    override fun getItemCount(): Int = movies.size
 
-    class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageUrl = "https://image.tmdb.org/t/p/w185/"
-        private val titleText: TextView by lazy {
-            itemView.findViewById(R.id.movie_title)
-        }
-        private val poster: ImageView by lazy {
-            itemView.findViewById(R.id.movie_poster)
-        }
+    inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        // Pastikan ID ini sesuai dengan yang ada di item_movie.xml
+        private val titleView: TextView = itemView.findViewById(R.id.movie_title)
+        private val posterView: ImageView = itemView.findViewById(R.id.movie_poster)
 
         fun bind(movie: Movie) {
-            titleText.text = movie.title
+            titleView.text = movie.title
 
             Glide.with(itemView.context)
-                .load("$imageUrl${movie.posterPath}")
-                .placeholder(R.mipmap.ic_launcher)
-                .fitCenter()
-                .into(poster)
-        }
-    }
+                .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
+                // .placeholder(R.drawable.placeholder) // Hapus comment ini HANYA jika file placeholder ada di drawable
+                .into(posterView)
 
-    interface MovieClickListener {
-        fun onMovieClick(movie: Movie)
+            itemView.setOnClickListener {
+                listener.onMovieClick(movie)
+            }
+        }
     }
 }
