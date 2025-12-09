@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.21" # Sesuaikan dengan versi Kotlin project Anda
+kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -22,10 +22,13 @@ glide = "4.16.0"
 lifecycle = "2.8.7"
 coroutines = "1.9.0"
 
-# Room Database (Tambahan Baru)
+# Room Database
 room = "2.6.1"
 
-# KSP Plugin (Wajib sinkron dengan versi Kotlin)
+# WorkManager (TAMBAHAN BARU UNTUK MENGATASI ERROR)
+work = "2.9.0"
+
+# KSP Plugin
 ksp = "2.0.21-1.0.27"
 
 [libraries]
@@ -63,7 +66,11 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
+# WorkManager (TAMBAHAN BARU)
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+androidx-room = { id = "androidx.room", version.ref = "room" }

@@ -2,9 +2,6 @@ package com.example.lab_week_13
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-// PERBAIKAN: Import Movie dari root package, bukan .model
-import com.example.lab_week_13.Movie
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -21,12 +18,16 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
     val error: StateFlow<String> = _error
 
     init {
+        // Ganti nama fungsi di sini juga jika ada
         fetchPopularMovies()
     }
 
     private fun fetchPopularMovies() {
-        viewModelScope.launch(Dispatchers.IO) {
-            movieRepository.fetchMovies()
+        // viewModelScope sudah berjalan di Main thread, jadi tidak perlu Dispatchers.IO
+        viewModelScope.launch {
+            // --- PERBAIKAN DI SINI ---
+            // Panggil fungsi getMoviesFlow() yang baru
+            movieRepository.getMoviesFlow()
                 .catch { e ->
                     _error.value = "An exception occurred: ${e.message}"
                 }

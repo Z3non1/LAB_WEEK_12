@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp) // Tambahan PENTING: Plugin KSP
-    id("kotlin-parcelize") // Tambahan: Agar @Parcelize bisa dipakai
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.androidx.room) // Optional tapi bagus untuk Room
+    id("kotlin-parcelize")
 }
 
 android {
@@ -40,9 +41,16 @@ android {
         viewBinding = true
         dataBinding = true
     }
+
+    // Konfigurasi schema Room (Opsional, untuk menghilangkan warning schema)
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
+    implementation(libs.androidx.work.runtime)
+
     // Android Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -53,13 +61,13 @@ dependencies {
     // Room Database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler) // Gunakan KSP, bukan KAPT
+    ksp(libs.androidx.room.compiler) // Gunakan KSP
 
     // Networking (Retrofit + Moshi)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
+    // implementation(libs.moshi.kotlin) // Opsional: Bisa dihapus jika sudah pakai codegen untuk performa lebih baik
     ksp(libs.moshi.codegen) // Gunakan KSP
 
     // Image Loading (Glide)
