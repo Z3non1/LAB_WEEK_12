@@ -1,4 +1,4 @@
-package com.example.test_lab_week_12.model
+package com.example.lab_week_13
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.test_lab_week_12.R // Pastikan ini tidak merah
+
 
 class MovieAdapter(
     private val listener: MovieClickListener
@@ -15,10 +15,12 @@ class MovieAdapter(
 
     private val movies = mutableListOf<Movie>()
 
+    // Interface untuk menangani klik
     interface MovieClickListener {
         fun onMovieClick(movie: Movie)
     }
 
+    // Fungsi untuk mengupdate data di adapter
     fun addMovies(newMovies: List<Movie>) {
         movies.clear()
         movies.addAll(newMovies)
@@ -26,7 +28,7 @@ class MovieAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        // Pastikan file 'res/layout/item_movie.xml' sudah dibuat
+        // Layout item_movie harus ada di folder res/layout/
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_movie, parent, false)
         return MovieViewHolder(view)
@@ -40,18 +42,21 @@ class MovieAdapter(
 
     inner class MovieViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        // Pastikan ID ini sesuai dengan yang ada di item_movie.xml
+        // Menghubungkan View dengan ID di layout item_movie.xml
         private val titleView: TextView = itemView.findViewById(R.id.movie_title)
         private val posterView: ImageView = itemView.findViewById(R.id.movie_poster)
 
         fun bind(movie: Movie) {
             titleView.text = movie.title
 
+            // Menggunakan Glide untuk memuat gambar
             Glide.with(itemView.context)
                 .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
-                // .placeholder(R.drawable.placeholder) // Hapus comment ini HANYA jika file placeholder ada di drawable
+                .placeholder(android.R.drawable.ic_menu_gallery) // Placeholder bawaan Android sementara
+                .error(android.R.drawable.stat_notify_error) // Icon error bawaan
                 .into(posterView)
 
+            // Menangani event klik item
             itemView.setOnClickListener {
                 listener.onMovieClick(movie)
             }

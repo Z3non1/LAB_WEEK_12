@@ -1,19 +1,19 @@
+// File: app/build.gradle.kts
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-parcelize") // Plugin ini ditambahkan dengan cara ini (bukan alias, kecuali sudah didaftarkan di libs)
-    id("kotlin-kapt")      // Plugin ini WAJIB ada karena kamu pakai kapt(libs.moshi.kotlin.codegen)
+    alias(libs.plugins.ksp)
+    id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.example.test_lab_week_12"
-    compileSdk = 36
-    // Disarankan turunkan ke 34 atau 35 dulu jika 36 error (36 masih preview/beta di beberapa versi)
+    namespace = "com.example.lab_week_13"
+    compileSdk = 35// Sesuaikan dengan package Anda
 
     defaultConfig {
-        applicationId = "com.example.test_lab_week_12"
+        applicationId = "com.example.lab_week_13"
         minSdk = 24
-        targetSdk = 34 // Sesuaikan dengan compileSdk
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -29,45 +29,47 @@ android {
             )
         }
     }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    // Fitur build yang diperlukan
+    buildFeatures {
+        viewBinding = true
+        dataBinding = true
     }
 }
 
 dependencies {
 
-    // UI & AndroidX
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.constraintlayout)
 
-    // Glide for images
-    implementation(libs.glide)
-
-    // Retrofit + Moshi
+    // Networking (Retrofit + Moshi)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    // PENTING: Gunakan ksp() bukan kapt()
+    ksp(libs.moshi.codegen)
+    implementation(libs.logging.interceptor)
 
-    // KAPT untuk Moshi Codegen (Wajib ada plugin 'kotlin-kapt' di atas)
-    kapt(libs.moshi.kotlin.codegen)
+    // Image Loading (Glide)
+    implementation(libs.glide)
+    ksp(libs.ksp.glide) // Jika butuh anotasi Glide, gunakan ksp juga
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Lifecycle ViewModel + LiveData
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    // Lifecycle & Coroutines
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.kotlinx.coroutines.android)
 
     // Testing
     testImplementation(libs.junit)

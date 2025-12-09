@@ -1,11 +1,12 @@
-package com.example.test_lab_week_12
+package com.example.lab_week_13.model // 1. Sesuaikan package dengan nama folder
 
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.test_lab_week_12.model.Movie
+import com.example.lab_week_13.Movie // 2. PENTING: Import Movie dari package utama
+import com.example.lab_week_13.R     // 3. PENTING: Import R agar ID layout terbaca
 
 class MovieDetailActivity : AppCompatActivity() {
 
@@ -14,7 +15,6 @@ class MovieDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_movie_detail)
 
         // Menerima data Movie dari Intent
-        // Gunakan getParcelableExtra. Untuk API 33+ ada cara baru, tapi ini cara standar yang kompatibel.
         @Suppress("DEPRECATION")
         val movie = intent.getParcelableExtra<Movie>("movie")
 
@@ -32,6 +32,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
             Glide.with(this)
                 .load("https://image.tmdb.org/t/p/w500${movie.posterPath}")
+                .placeholder(android.R.drawable.ic_menu_gallery) // Tambahan: placeholder
                 .into(posterView)
         }
     }
