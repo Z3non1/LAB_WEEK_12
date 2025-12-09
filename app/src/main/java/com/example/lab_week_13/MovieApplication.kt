@@ -2,6 +2,7 @@ package com.example.lab_week_13
 
 import android.app.Application
 import com.example.lab_week_13.api.MovieService
+import com.example.lab_week_13.database.MovieDatabase
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
@@ -23,9 +24,15 @@ class MovieApplication : Application() {
         retrofit.create(MovieService::class.java)
     }
 
-    // 2. Initialize Repository with the Service
+    // 2. Initialize Database Instance
+    private val movieDatabase: MovieDatabase by lazy {
+        MovieDatabase.getInstance(this)
+    }
+
+    // 3. Initialize Repository
+    // PERBAIKAN: Kirim 'movieDatabase' (bukan .movieDao()) karena Repository Anda memintanya demikian.
     val movieRepository: MovieRepository by lazy {
-        MovieRepository(movieService) // Pass the service here!
+        MovieRepository(movieService, movieDatabase)
     }
 
     override fun onCreate() {
